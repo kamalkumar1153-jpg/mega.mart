@@ -16,188 +16,36 @@
             --price-red: #b12704;
         }
 
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); }
 
-        /* Top Navbar */
-        .navbar {
-            background-color: var(--amazon-blue);
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .nav-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .brand {
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
+        .navbar { background-color: var(--amazon-blue); color: white; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 0; z-index: 100; }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 22px; font-weight: bold; color: white; text-decoration: none; }
         .brand span { color: var(--amazon-yellow); }
         
-        .search-container {
-            display: flex;
-            width: 100%;
-        }
-        .search-container input {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 4px 0 0 4px;
-            outline: none;
-        }
-        .search-container button {
-            background: var(--amazon-yellow);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .search-container { display: flex; width: 100%; }
+        .search-container input { flex: 1; padding: 10px; border: none; border-radius: 4px 0 0 4px; outline: none; }
+        .search-container button { background: var(--amazon-yellow); border: none; padding: 10px 15px; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
 
-        /* Category Filter Tabs */
-        .categories-bar {
-            background-color: var(--amazon-light);
-            display: flex;
-            gap: 15px;
-            padding: 8px 20px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .cat-tab {
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 4px 8px;
-            border-radius: 3px;
-            transition: 0.2s;
-        }
-        .cat-tab:hover, .cat-tab.active {
-            background-color: rgba(255,255,255,0.2);
-            color: var(--amazon-yellow);
-        }
+        .categories-bar { background-color: var(--amazon-light); display: flex; gap: 15px; padding: 8px 20px; overflow-x: auto; white-space: nowrap; }
+        .cat-tab { color: white; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 3px; transition: 0.2s; }
+        .cat-tab:hover, .cat-tab.active { background-color: rgba(255,255,255,0.2); color: var(--amazon-yellow); }
 
-        /* Flash Deal Banner */
-        .flash-banner {
-            background: #232f3e;
-            color: #fff;
-            padding: 12px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            border-bottom: 3px solid var(--amazon-yellow);
-            display: none; /* Only visible if ticker text exists */
-        }
+        .flash-banner { background: #232f3e; color: #fff; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; border-bottom: 3px solid var(--amazon-yellow); display: none; }
 
-        /* Product Grid Grid Layout */
-        .main-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-        }
+        .main-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
 
-        /* E-com Product Card Card */
-        .product-card {
-            background: white;
-            border-radius: 4px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #cc0c39;
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 3px 6px;
-            border-radius: 2px;
-        }
-        .product-img {
-            width: 100%;
-            height: 150px;
-            object-fit: contain;
-            margin-bottom: 10px;
-        }
-        .product-title {
-            font-size: 14px;
-            font-weight: 500;
-            margin: 0 0 8px 0;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            height: 38px;
-        }
-        .price-section {
-            margin-bottom: 10px;
-        }
-        .final-price {
-            color: var(--price-red);
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .mrp-price {
-            text-decoration: line-through;
-            color: #565959;
-            font-size: 12px;
-            margin-left: 5px;
-        }
+        .product-card { background: white; border-radius: 4px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #ddd; }
+        .badge { background: #cc0c39; color: white; font-size: 11px; padding: 3px 6px; }
+        .product-img { width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; }
+        .product-title { font-size: 14px; height: 38px; overflow: hidden; margin: 5px 0; }
+        .final-price { color: var(--price-red); font-size: 18px; font-weight: bold; }
+        .mrp-price { text-decoration: line-through; color: #565959; font-size: 12px; }
         
-        .buy-btn {
-            background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
-            border: 1px solid #a88734;
-            border-radius: 4px;
-            padding: 8px;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .buy-btn:hover {
-            background: linear-gradient(to bottom, #f5d78e, #eeb933);
-        }
-
-        .out-of-stock-btn {
-            background: #e0e0e0;
-            border: 1px solid #ccc;
-            color: #777;
-            cursor: not-allowed;
-        }
-
-        /* Mobile Optimization */
-        @media (max-width: 600px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .product-img { height: 120px; }
-        }
+        .buy-btn { background: var(--amazon-yellow); border: 1px solid #a88734; padding: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        
+        @media (max-width: 600px) { .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
     </style>
 </head>
 <body>
@@ -205,32 +53,27 @@
 <div class="navbar">
     <div class="nav-top">
         <a href="#" class="brand">Mega<span>Mart</span></a>
-        <div style="font-size: 13px; font-weight: 500;">🇮🇳 Hub</div>
+        <div>🇮🇳 Hub</div>
     </div>
     <div class="search-container">
-        <input type="text" id="searchInput" oninput="searchProducts()" placeholder="Search products, brands and categories...">
+        <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Search products...">
         <button>🔍</button>
     </div>
 </div>
 
 <div class="categories-bar">
-    <div class="cat-tab active" id="cat-all" onclick="filterCategory('All')">All Deals</div>
+    <div class="cat-tab active" id="cat-all" onclick="filterCategory('All')">All</div>
     <div class="cat-tab" id="cat-Electronics" onclick="filterCategory('Electronics')">Electronics</div>
     <div class="cat-tab" id="cat-Fashion" onclick="filterCategory('Fashion')">Fashion</div>
-    <div class="cat-tab" id="cat-Home Goods" onclick="filterCategory('Home Goods')">Home & Kitchen</div>
-    <div class="cat-tab" id="cat-Beauty" onclick="filterCategory('Beauty')">Beauty</div>
 </div>
 
 <div class="flash-banner" id="liveFlashBanner"></div>
 
 <div class="main-container">
-    <div class="products-grid" id="showroomGrid">
-        <p style="text-align: center; grid-column: 1/-1; color: #666;">Loading today's best deals...</p>
-    </div>
+    <div class="products-grid" id="showroomGrid">Loading...</div>
 </div>
 
 <script>
-    // Firebase Configurations
     const firebaseConfig = {
         apiKey: "AIzaSyCuhd6WeneZFqkScgyVv2-8k5_xZz5N5o",
         databaseURL: "https://sanitarymart-65014-default-rtdb.firebaseio.com/",
@@ -243,99 +86,55 @@
     let allProducts = [];
     let currentCategory = 'All';
 
-    // 1. Fetch Dynamic Flash Deal Ticker Live
-    database.ref('storeSettings/flashBanner').on('value', (snap) => {
-        const banner = document.getElementById('liveFlashBanner');
-        if(snap.exists() && snap.val().trim() !== "") {
-            banner.innerText = "🔥 " + snap.val();
-            banner.style.display = "block";
-        } else {
-            banner.style.display = "none";
-        }
-    });
-
-    // 2. Fetch Dashboard E-commerce Items Live
     database.ref('ecommerce_products').on('value', (snap) => {
         allProducts = [];
-        snap.forEach((child) => {
-            let data = child.val();
-            data.id = child.key;
-            allProducts.push(data);
-        });
+        snap.forEach((child) => { allProducts.push({...child.val(), id: child.key}); });
         renderProducts();
     });
 
-    // 3. Render Items to Grid Layout
     function renderProducts() {
         const grid = document.getElementById('showroomGrid');
         grid.innerHTML = "";
-
-        // Filters engine logic
-        let filtered = allProducts;
-        if(currentCategory !== 'All') {
-            filtered = allProducts.filter(p => p.category === currentCategory);
-        }
-
-        const searchText = document.getElementById('searchInput').value.toLowerCase();
-        if(searchText) {
-            filtered = filtered.filter(p => p.title.toLowerCase().includes(searchText));
-        }
-
-        if(filtered.length === 0) {
-            grid.innerHTML = `<p style="text-align: center; grid-column: 1/-1; color: #777; padding: 40px 0;">No active listings found under this criteria.</p>`;
-            return;
-        }
+        let filtered = currentCategory === 'All' ? allProducts : allProducts.filter(p => p.category === currentCategory);
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(search));
 
         filtered.forEach(p => {
-            // Price Calculation logic dynamically based on discount
-            let discountAmount = (p.price * p.discount) / 100;
-            let finalPrice = Math.round(p.price - discountAmount);
-
-            let actionButton = `<button class="buy-btn" onclick="orderNow('${p.title}', ${finalPrice})">Buy Now</button>`;
-            if(p.outOfStock) {
-                actionButton = `<button class="buy-btn out-of-stock-btn" disabled>Out of Stock</button>`;
-            }
-
+            let finalPrice = Math.round(p.price - (p.price * p.discount / 100));
             grid.innerHTML += `
                 <div class="product-card">
+                    <span class="badge">${p.discount}% OFF</span>
+                    <img src="${p.image}" class="product-img">
+                    <h4 class="product-title">${p.title}</h4>
                     <div>
-                        <span class="badge">${p.discount}% OFF</span>
-                        <img src="${p.image}" class="product-img" alt="${p.title}">
-                        <h4 class="product-title">${p.title}</h4>
+                        <span class="final-price">₹${finalPrice}</span>
+                        <span class="mrp-price">₹${p.price}</span>
                     </div>
-                    <div>
-                        <div class="price-section">
-                            <span class="final-price">₹${finalPrice}</span>
-                            <span class="mrp-price">M.R.P: ₹${p.price}</span>
-                        </div>
-                        ${actionButton}
-                    </div>
+                    <button class="buy-btn" onclick="orderNow('${p.title}', ${finalPrice})">Pay & Buy Now</button>
                 </div>
             `;
         });
     }
 
-    // 4. Quick Action Categorization
+    function orderNow(itemName, price) {
+        // आपका UPI ID अपडेटेड है
+        const upiID = "9024686665@ybl"; 
+        const upiUrl = `upi://pay?pa=${upiID}&pn=MegaMart&am=${price}&cu=INR&tn=Payment_for_${encodeURIComponent(itemName)}`;
+
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            window.location.href = upiUrl;
+        } else {
+            alert(`कृपया पेमेंट के लिए इस UPI ID का उपयोग करें:\n\nUPI ID: ${upiID}\nAmount: ₹${price}`);
+        }
+    }
+
     function filterCategory(cat) {
         currentCategory = cat;
-        document.querySelectorAll('.cat-tab').forEach(tab => tab.classList.remove('active'));
-        
-        // Handle target tab element state management
-        if(cat === 'All') document.getElementById('cat-all').classList.add('active');
-        else document.getElementById(`cat-${cat}`).classList.add('active');
-        
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`cat-${cat === 'All' ? 'all' : cat}`).classList.add('active');
         renderProducts();
-    }
-
-    // 5. Instantly Filter Items via Search Box
-    function searchProducts() {
-        renderProducts();
-    }
-
-    // 6. Buy Now Trigger
-    function orderNow(itemName, price) {
-        alert(`🛒 Order Request Received!\nProduct: ${itemName}\nFinal Amount: ₹${price}\n\nThank you for shopping with MegaMart!`);
     }
 </script>
 </body>
 </html>
+
