@@ -18,20 +18,11 @@
 
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); }
 
-        .navbar { background-color: var(--amazon-blue); color: white; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 0; z-index: 100; }
-        .nav-top { display: flex; justify-content: space-between; align-items: center; }
+        .navbar { background-color: var(--amazon-blue); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .brand { font-size: 22px; font-weight: bold; color: white; text-decoration: none; }
         .brand span { color: var(--amazon-yellow); }
         
-        .search-container { display: flex; width: 100%; }
-        .search-container input { flex: 1; padding: 10px; border: none; border-radius: 4px 0 0 4px; outline: none; }
-        .search-container button { background: var(--amazon-yellow); border: none; padding: 10px 15px; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
-
-        .categories-bar { background-color: var(--amazon-light); display: flex; gap: 15px; padding: 8px 20px; overflow-x: auto; white-space: nowrap; }
-        .cat-tab { color: white; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 3px; transition: 0.2s; }
-        .cat-tab:hover, .cat-tab.active { background-color: rgba(255,255,255,0.2); color: var(--amazon-yellow); }
-
-        .flash-banner { background: #232f3e; color: #fff; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; border-bottom: 3px solid var(--amazon-yellow); display: none; }
+        .cart-btn { background: var(--amazon-yellow); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         .main-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
@@ -43,34 +34,34 @@
         .final-price { color: var(--price-red); font-size: 18px; font-weight: bold; }
         .mrp-price { text-decoration: line-through; color: #565959; font-size: 12px; }
         
-        .buy-btn { background: var(--amazon-yellow); border: 1px solid #a88734; padding: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        
+        .action-btn { background: var(--amazon-yellow); border: 1px solid #a88734; padding: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; border-radius: 4px; }
+
+        /* Cart Modal/Section */
+        .cart-section { background: white; padding: 20px; margin-top: 20px; border-radius: 4px; border: 1px solid #ddd; display: none; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .pay-link { display: block; background: #28a745; color: white; text-align: center; padding: 12px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-top: 15px; }
+
         @media (max-width: 600px) { .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
     </style>
 </head>
 <body>
 
 <div class="navbar">
-    <div class="nav-top">
-        <a href="#" class="brand">Mega<span>Mart</span></a>
-        <div>🇮🇳 Hub</div>
-    </div>
-    <div class="search-container">
-        <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Search products...">
-        <button>🔍</button>
-    </div>
+    <a href="#" class="brand">Mega<span>Mart</span></a>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
 </div>
-
-<div class="categories-bar">
-    <div class="cat-tab active" id="cat-all" onclick="filterCategory('All')">All</div>
-    <div class="cat-tab" id="cat-Electronics" onclick="filterCategory('Electronics')">Electronics</div>
-    <div class="cat-tab" id="cat-Fashion" onclick="filterCategory('Fashion')">Fashion</div>
-</div>
-
-<div class="flash-banner" id="liveFlashBanner"></div>
 
 <div class="main-container">
+    <!-- Products Grid -->
     <div class="products-grid" id="showroomGrid">Loading...</div>
+
+    <!-- Cart View Section -->
+    <div class="cart-section" id="cartSection">
+        <h2>Your Shopping Cart</h2>
+        <div id="cartItemsList">Cart is empty</div>
+        <h3>Total: ₹<span id="cartTotal">0</span></h3>
+        <a href="#" id="upiCheckoutBtn" class="pay-link" style="display:none;">Proceed to UPI Payment</a>
+    </div>
 </div>
 
 <script>
@@ -84,7 +75,7 @@
     const database = firebase.database();
 
     let allProducts = [];
-    let currentCategory = 'All';
+    let cart = [];
 
     database.ref('ecommerce_products').on('value', (snap) => {
         allProducts = [];
@@ -95,11 +86,8 @@
     function renderProducts() {
         const grid = document.getElementById('showroomGrid');
         grid.innerHTML = "";
-        let filtered = currentCategory === 'All' ? allProducts : allProducts.filter(p => p.category === currentCategory);
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        filtered = filtered.filter(p => p.title.toLowerCase().includes(search));
-
-        filtered.forEach(p => {
+        
+        allProducts.forEach(p => {
             let finalPrice = Math.round(p.price - (p.price * p.discount / 100));
             grid.innerHTML += `
                 <div class="product-card">
@@ -110,31 +98,54 @@
                         <span class="final-price">₹${finalPrice}</span>
                         <span class="mrp-price">₹${p.price}</span>
                     </div>
-                    <button class="buy-btn" onclick="orderNow('${p.title}', ${finalPrice})">Pay & Buy Now</button>
+                    <button class="action-btn" onclick="addToCart('${p.id}', '${p.title.replace(/'/g, "")}', ${finalPrice})">Add to Cart</button>
                 </div>
             `;
         });
     }
 
-    function orderNow(itemName, price) {
-        // आपका UPI ID अपडेटेड है
-        const upiID = "9024686665@ybl"; 
-        const upiUrl = `upi://pay?pa=${upiID}&pn=MegaMart&am=${price}&cu=INR&tn=Payment_for_${encodeURIComponent(itemName)}`;
-
-        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            window.location.href = upiUrl;
-        } else {
-            alert(`कृपया पेमेंट के लिए इस UPI ID का उपयोग करें:\n\nUPI ID: ${upiID}\nAmount: ₹${price}`);
-        }
+    function addToCart(id, title, price) {
+        cart.push({ id, title, price });
+        document.getElementById('cartCount').innerText = cart.length;
+        alert(title + " added to cart!");
+        updateCartUI();
     }
 
-    function filterCategory(cat) {
-        currentCategory = cat;
-        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`cat-${cat === 'All' ? 'all' : cat}`).classList.add('active');
-        renderProducts();
+    function toggleCart() {
+        const cartSec = document.getElementById('cartSection');
+        cartSec.style.display = cartSec.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function updateCartUI() {
+        const list = document.getElementById('cartItemsList');
+        const totalSpan = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('upiCheckoutBtn');
+
+        if (cart.length === 0) {
+            list.innerHTML = "Cart is empty";
+            totalSpan.innerText = "0";
+            checkoutBtn.style.display = "none";
+            return;
+        }
+
+        let html = "";
+        let total = 0;
+        cart.forEach((item, index) => {
+            total += item.price;
+            html += `<div class="cart-item"><span>${item.title}</span> <b>₹${item.price}</b></div>`;
+        });
+
+        list.innerHTML = html;
+        totalSpan.innerText = total;
+
+        // UPI link for total Cart amount
+        const upiID = "9024686665@ptyes";
+        const upiUrl = `upi://pay?pa=${upiID}&pn=MegaMart&am=${total}&cu=INR&tn=Cart_Total_Payment`;
+        checkoutBtn.href = upiUrl;
+        checkoutBtn.style.display = "block";
     }
 </script>
 </body>
 </html>
+
 
