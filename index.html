@@ -26,6 +26,11 @@
         .inquiry-number { color: var(--amazon-yellow); font-size: 13px; font-weight: bold; text-decoration: none; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 4px; }
         .cart-btn { background: var(--amazon-yellow); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
+        /* Category Filter Tabs Bar */
+        .categories-bar { background-color: var(--amazon-light); display: flex; gap: 15px; padding: 10px 20px; overflow-x: auto; white-space: nowrap; }
+        .cat-tab { color: white; cursor: pointer; font-size: 14px; padding: 6px 12px; border-radius: 3px; transition: 0.2s; background: rgba(255,255,255,0.05); }
+        .cat-tab:hover, .cat-tab.active { background-color: var(--amazon-yellow); color: var(--text-main); font-weight: bold; }
+
         .main-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
 
@@ -38,10 +43,15 @@
         
         .action-btn { background: var(--amazon-yellow); border: 1px solid #a88734; padding: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; border-radius: 4px; }
 
-        /* Cart Modal/Section */
+        /* Cart & Address Section */
         .cart-section { background: white; padding: 20px; margin-top: 20px; border-radius: 4px; border: 1px solid #ddd; display: none; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .pay-link { display: block; background: #28a745; color: white; text-align: center; padding: 12px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-top: 15px; }
+        
+        .address-box { margin-top: 20px; padding: 15px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 4px; }
+        .address-box h3 { margin-top: 0; font-size: 16px; color: #333; }
+        .address-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+
+        .pay-link { display: block; background: #28a745; color: white; text-align: center; padding: 12px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-top: 15px; cursor: pointer; border: none; width: 100%; font-size: 16px;}
         .inquiry-footer { margin-top: 15px; font-size: 14px; text-align: center; color: #555; }
         .inquiry-footer a { color: #0066c0; font-weight: bold; text-decoration: none; }
 
@@ -53,10 +63,18 @@
 <div class="navbar">
     <a href="#" class="brand">Mega<span>Mart</span></a>
     <div class="nav-right">
-        <!-- टॉप बार में इन्क्वायरी नंबर (क्लिक करने पर सीधा कॉल लगेगा) -->
         <a href="tel:9024686665" class="inquiry-number">📞 9024686665</a>
         <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
     </div>
+</div>
+
+<!-- Category Filter Tabs -->
+<div class="categories-bar">
+    <div class="cat-tab active" onclick="filterCategory('All', this)">All Deals</div>
+    <div class="cat-tab" onclick="filterCategory('Electronics', this)">Electronics</div>
+    <div class="cat-tab" onclick="filterCategory('Fashion', this)">Fashion</div>
+    <div class="cat-tab" onclick="filterCategory('Home Goods', this)">Home & Kitchen</div>
+    <div class="cat-tab" onclick="filterCategory('Beauty', this)">Beauty</div>
 </div>
 
 <div class="main-container">
@@ -68,9 +86,17 @@
         <h2>Your Shopping Cart</h2>
         <div id="cartItemsList">Cart is empty</div>
         <h3>Total: ₹<span id="cartTotal">0</span></h3>
-        <a href="#" id="upiCheckoutBtn" class="pay-link" style="display:none;">Proceed to UPI Payment</a>
+
+        <!-- Delivery Address Form -->
+        <div class="address-box" id="addressBox" style="display:none;">
+            <h3>Enter Delivery Address</h3>
+            <input type="text" id="custName" class="address-input" placeholder="Full Name">
+            <input type="text" id="custPhone" class="address-input" placeholder="Mobile Number (e.g. 9024686665)" value="9024686665">
+            <textarea id="custAddress" class="address-input" placeholder="House No, Street, Landmark, City, Pincode" rows="3"></textarea>
+        </div>
+
+        <button id="upiCheckoutBtn" class="pay-link" style="display:none;" onclick="proceedToPayment()">Proceed to UPI Payment</button>
         
-        <!-- कार्ट के नीचे भी इन्क्वायरी हेल्पिंग टेक्स्ट -->
         <div class="inquiry-footer">
             Any question about order? Call us at <a href="tel:9024686665">9024686665</a>
         </div>
@@ -89,6 +115,7 @@
 
     let allProducts = [];
     let cart = [];
+    let selectedCategory = 'All';
 
     database.ref('ecommerce_products').on('value', (snap) => {
         allProducts = [];
@@ -96,11 +123,29 @@
         renderProducts();
     });
 
+    function filterCategory(category, element) {
+        selectedCategory = category;
+        document.querySelectorAll('.cat-tab').forEach(tab => tab.classList.remove('active'));
+        element.classList.add('active');
+        renderProducts();
+    }
+
     function renderProducts() {
         const grid = document.getElementById('showroomGrid');
         grid.innerHTML = "";
         
-        allProducts.forEach(p => {
+        // Category filtering logic
+        let filteredProducts = allProducts;
+        if(selectedCategory !== 'All') {
+            filteredProducts = allProducts.filter(p => p.category === selectedCategory);
+        }
+
+        if(filteredProducts.length === 0) {
+            grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #777;">No products found in this category.</p>`;
+            return;
+        }
+
+        filteredProducts.forEach(p => {
             let finalPrice = Math.round(p.price - (p.price * p.discount / 100));
             grid.innerHTML += `
                 <div class="product-card">
@@ -137,11 +182,13 @@
         const list = document.getElementById('cartItemsList');
         const totalSpan = document.getElementById('cartTotal');
         const checkoutBtn = document.getElementById('upiCheckoutBtn');
+        const addressBox = document.getElementById('addressBox');
 
         if (cart.length === 0) {
             list.innerHTML = "Cart is empty";
             totalSpan.innerText = "0";
             checkoutBtn.style.display = "none";
+            addressBox.style.display = "none";
             return;
         }
 
@@ -155,15 +202,37 @@
         list.innerHTML = html;
         totalSpan.innerText = total;
 
-        // UPI link setup with correct ID
-        const upiID = "9024686665@ptyes";
-        const upiUrl = `upi://pay?pa=${upiID}&pn=MegaMart&am=${total}&cu=INR&tn=Cart_Total_Payment`;
-        checkoutBtn.href = upiUrl;
+        addressBox.style.display = "block";
         checkoutBtn.style.display = "block";
+    }
+
+    function proceedToPayment() {
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
+
+        if(!name || !phone || !address) {
+            alert("कृपया पेमेंट करने से पहले अपना नाम, मोबाइल नंबर और पूरा डिलीवरी एड्रेस भरें!");
+            return;
+        }
+
+        let total = 0;
+        cart.forEach(item => total += item.price);
+
+        const upiID = "9024686665@ptyes";
+        const note = encodeURIComponent(`Order by ${name} (${phone}) - ${address}`);
+        const upiUrl = `upi://pay?pa=${upiID}&pn=MegaMart&am=${total}&cu=INR&tn=${note}`;
+
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            window.location.href = upiUrl;
+        } else {
+            alert(`Payment Details:\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\nTotal: ₹${total}\nUPI ID: ${upiID}`);
+        }
     }
 </script>
 </body>
 </html>
+
 
 
 
